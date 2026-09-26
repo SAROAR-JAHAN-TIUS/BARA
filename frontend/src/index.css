@@ -1,0 +1,94 @@
+/* BARA – Global styles */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22273a;
+  --border: #2e3347;
+  --text: #e2e4ed;
+  --muted: #8b92a9;
+  --accent: #4f7ef7;
+  --accent-hover: #6b95ff;
+  --red: #e05252;
+  --yellow: #e0a84e;
+  --green: #4ec47a;
+  --font: 'Inter', system-ui, sans-serif;
+  --radius: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,.45);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-hover); }
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background .15s, opacity .15s;
+}
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+input[type="text"] {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
+  outline: none;
+  transition: border-color .15s;
+}
+input[type="text"]:focus { border-color: var(--accent); }
+
+/* Utility */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+.badge-high   { background: rgba(224,82,82,.2);  color: var(--red); }
+.badge-medium { background: rgba(224,168,78,.2); color: var(--yellow); }
+.badge-low    { background: rgba(78,196,122,.2); color: var(--green); }
+.badge-info   { background: rgba(79,126,247,.2); color: var(--accent); }
+
+.method-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .05em;
+}
+.method-GET    { background: rgba(78,196,122,.2); color: var(--green); }
+.method-POST   { background: rgba(79,126,247,.2); color: var(--accent); }
+.method-PUT    { background: rgba(224,168,78,.2); color: var(--yellow); }
+.method-PATCH  { background: rgba(224,168,78,.2); color: var(--yellow); }
+.method-DELETE { background: rgba(224,82,82,.2);  color: var(--red); }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }

@@ -1,0 +1,793 @@
+BARA HACKATHON - COMPLETE BUILD PLAN
+=====================================
+
+PROJECT NAME
+------------
+BARA
+
+PURPOSE
+-------
+BARA is a beginner-friendly software architecture and integration
+assistant.
+
+It helps beginner developers understand:
+
+- How frontend connects to backend
+- How APIs connect components
+- How data flows through an application
+- Why frontend/backend integration fails
+- Where API contracts don't match
+- How to fix integration problems
+
+IMPORTANT DEVELOPMENT RULE
+---------------------------
+Use IBM Bob Shell as the development agent.
+
+The BARA application itself must work independently after development.
+
+Do NOT make Bob Shell a runtime dependency of BARA.
+
+Do NOT use watsonx.ai for the first MVP.
+
+Build deterministic/static analysis first.
+
+==================================================
+PHASE 1 - PROJECT INITIALIZATION
+==================================================
+
+Create this structure:
+
+BARA/
+├── frontend/
+├── backend/
+├── examples/
+│   └── demo-project/
+├── tests/
+├── README.md
+├── .gitignore
+└── .env.example
+
+Frontend:
+- React
+- Vite
+- TypeScript
+
+Backend:
+- Python
+- FastAPI
+
+==================================================
+PHASE 2 - ARCHITECTURE
+==================================================
+
+Architecture:
+
+User
+ |
+ v
+BARA Frontend
+ |
+ | HTTP
+ v
+BARA Backend
+ |
+ +--> Project Scanner
+ |
+ +--> Frontend Analyzer
+ |
+ +--> Backend Analyzer
+ |
+ +--> API Contract Analyzer
+ |
+ +--> Mismatch Detector
+ |
+ +--> Architecture Builder
+ |
+ v
+Structured Analysis
+ |
+ v
+Frontend Visualization
+
+
+Main data flow:
+
+Project
+  ->
+Scan files
+  ->
+Detect frontend
+  ->
+Detect backend
+  ->
+Extract API contracts
+  ->
+Normalize endpoints
+  ->
+Compare contracts
+  ->
+Detect problems
+  ->
+Generate explanations
+  ->
+Display results
+
+
+==================================================
+PHASE 3 - BACKEND
+==================================================
+
+Build a FastAPI backend.
+
+Required endpoints:
+
+GET /health
+
+POST /api/analyze
+
+GET /api/analysis/{analysis_id}
+
+The analyze endpoint should accept a project or project representation
+and return structured architecture analysis.
+
+Keep the backend modular.
+
+Suggested modules:
+
+backend/
+├── app/
+│   ├── main.py
+│   ├── routes/
+│   ├── services/
+│   ├── analyzers/
+│   ├── models/
+│   └── utils/
+└── tests/
+
+
+==================================================
+PHASE 4 - PROJECT SCANNER
+==================================================
+
+Implement a project scanner.
+
+The scanner should:
+
+- Walk through project directories
+- Identify relevant source files
+- Ignore node_modules
+- Ignore .git
+- Ignore virtual environments
+- Ignore build output
+- Identify frontend files
+- Identify backend files
+
+Supported initial file types:
+
+.js
+.jsx
+.ts
+.tsx
+.py
+
+Do not attempt to support every programming language in the MVP.
+
+
+==================================================
+PHASE 5 - FRONTEND ANALYZER
+==================================================
+
+Detect frontend API calls.
+
+Initially support:
+
+fetch()
+
+axios.get()
+axios.post()
+axios.put()
+axios.patch()
+axios.delete()
+
+Extract:
+
+- HTTP method
+- URL/path
+- request body
+- query parameters
+- response usage
+- source file
+- line number
+
+Example:
+
+fetch("/api/users")
+
+should produce:
+
+method: GET
+path: /api/users
+
+
+Example:
+
+fetch("/api/users", {
+    method: "POST",
+    body: ...
+})
+
+should produce:
+
+method: POST
+path: /api/users
+
+
+==================================================
+PHASE 6 - BACKEND ANALYZER
+==================================================
+
+Initially support FastAPI.
+
+Detect:
+
+@app.get()
+@app.post()
+@app.put()
+@app.patch()
+@app.delete()
+
+Extract:
+
+- HTTP method
+- route path
+- request model
+- request fields
+- response model
+- response fields
+- source file
+- line number
+
+Example:
+
+@app.get("/api/users")
+
+should produce:
+
+method: GET
+path: /api/users
+
+
+==================================================
+PHASE 7 - API NORMALIZATION
+==================================================
+
+Normalize paths before comparison.
+
+Examples:
+
+/api/users/
+/api/users
+
+should be treated as equivalent.
+
+Handle simple path parameters:
+
+/api/users/123
+
+/api/users/{id}
+
+Do not overcomplicate normalization in MVP.
+
+
+==================================================
+PHASE 8 - MISMATCH DETECTION
+==================================================
+
+Detect at least these problems:
+
+1. Missing backend endpoint
+
+Frontend calls:
+
+/api/users
+
+Backend does not provide it.
+
+
+2. HTTP method mismatch
+
+Frontend:
+
+POST /api/users
+
+Backend:
+
+GET /api/users
+
+
+3. API path mismatch
+
+Frontend:
+
+/api/users
+
+Backend:
+
+/api/user
+
+
+4. Request field mismatch
+
+Frontend sends:
+
+username
+
+Backend expects:
+
+name
+
+
+5. Response field mismatch
+
+Frontend expects:
+
+username
+
+Backend returns:
+
+name
+
+
+6. Query parameter mismatch
+
+Frontend:
+
+/api/users?limit=10
+
+Backend expects a different parameter.
+
+
+==================================================
+PHASE 9 - STRUCTURED ISSUE FORMAT
+==================================================
+
+Every detected issue should contain:
+
+issue_type
+severity
+frontend_location
+backend_location
+expected
+actual
+explanation
+suggested_fix
+
+Example:
+
+{
+  "issue_type": "PATH_MISMATCH",
+  "severity": "high",
+  "frontend_location": "...",
+  "backend_location": "...",
+  "expected": "/api/users",
+  "actual": "/api/user",
+  "explanation": "The frontend requests /api/users but the backend exposes /api/user.",
+  "suggested_fix": "Change one side so both use the same endpoint."
+}
+
+
+==================================================
+PHASE 10 - ARCHITECTURE ANALYSIS
+==================================================
+
+Generate an architecture representation containing:
+
+- Frontend components
+- Backend components
+- API endpoints
+- Services
+- Data models
+- Connections
+- Detected databases if identifiable
+
+Represent relationships in structured JSON.
+
+Example:
+
+Frontend Component
+    |
+    v
+API Request
+    |
+    v
+Backend Endpoint
+    |
+    v
+Service
+    |
+    v
+Database
+
+
+==================================================
+PHASE 11 - FRONTEND
+==================================================
+
+Build a clean React interface.
+
+Main screens/components:
+
+1. Home
+2. Project selection/upload
+3. Analysis progress
+4. Architecture view
+5. API issues
+6. Issue details
+
+The UI should be simple and professional.
+
+Avoid unnecessary animations.
+
+Avoid excessive colors.
+
+Focus on readability.
+
+
+==================================================
+PHASE 12 - ARCHITECTURE VISUALIZATION
+==================================================
+
+Display:
+
+Frontend
+   |
+   v
+API
+   |
+   v
+Backend
+   |
+   v
+Service
+   |
+   v
+Database
+
+Show connections between components.
+
+When an integration problem exists, make the affected connection obvious.
+
+Clicking an issue should display:
+
+- Problem
+- Frontend code location
+- Backend code location
+- Expected value
+- Actual value
+- Explanation
+- Suggested fix
+
+
+==================================================
+PHASE 13 - BEGINNER EXPLANATIONS
+==================================================
+
+Every issue should be understandable by a beginner.
+
+Do not only say:
+
+"PATH_MISMATCH"
+
+Instead explain:
+
+"The frontend is asking the backend for /api/users,
+but the backend provides /api/user.
+
+Think of this like calling the wrong phone number.
+Both sides exist, but they are not using the same address."
+
+
+==================================================
+PHASE 14 - DEMO PROJECT
+==================================================
+
+Create:
+
+examples/demo-project/
+
+Create intentionally broken frontend and FastAPI backend code.
+
+Include:
+
+1. Wrong API path
+2. HTTP method mismatch
+3. Request field mismatch
+4. Response field mismatch
+5. Query parameter mismatch
+
+The demo project should be small and easy to understand.
+
+Document each intentional bug.
+
+
+==================================================
+PHASE 15 - TESTING
+==================================================
+
+Create automated tests.
+
+Test:
+
+- Project scanner
+- Frontend API extraction
+- Backend route extraction
+- Path normalization
+- HTTP method comparison
+- Request field comparison
+- Response field comparison
+- Query parameter comparison
+- Complete analysis
+
+Every intentional bug in the demo project must be detected.
+
+Do NOT weaken tests just to make them pass.
+
+
+==================================================
+PHASE 16 - ERROR HANDLING
+==================================================
+
+Handle:
+
+- Empty projects
+- Unsupported files
+- Invalid source files
+- Missing frontend
+- Missing backend
+- Invalid project structure
+- Analysis failures
+
+Return useful error messages.
+
+
+==================================================
+PHASE 17 - SECURITY
+==================================================
+
+Never expose API keys in frontend code.
+
+Never commit:
+
+.env
+
+API keys
+passwords
+tokens
+credentials
+
+Use:
+
+.env
+
+for local secrets.
+
+Provide:
+
+.env.example
+
+with empty values.
+
+
+==================================================
+PHASE 18 - OPTIONAL AI LAYER
+==================================================
+
+Do NOT make AI required for the MVP.
+
+The deterministic analyzer must work independently.
+
+Design the system so an AI explanation provider can be added later.
+
+Possible architecture:
+
+Deterministic Analyzer
+        |
+        v
+Detected Issue
+        |
+        +----> Local explanation
+        |
+        +----> Optional AI explanation
+
+
+If IBM watsonx.ai becomes available later, integrate it behind
+a separate service interface.
+
+Never make the entire application dependent on AI availability.
+
+
+==================================================
+PHASE 19 - QUALITY
+==================================================
+
+Before considering the project complete:
+
+- Remove dead code
+- Remove duplicate code
+- Fix console errors
+- Fix backend errors
+- Run frontend build
+- Run backend tests
+- Test demo project
+- Test empty project
+- Test invalid project
+- Test all mismatch types
+
+
+==================================================
+PHASE 20 - README
+==================================================
+
+Create a professional README containing:
+
+1. Project name
+2. Problem
+3. Solution
+4. Target users
+5. Features
+6. Architecture
+7. Technology stack
+8. How BARA works
+9. Example mismatch
+10. Installation
+11. Running frontend
+12. Running backend
+13. Running demo
+14. Testing
+15. Future improvements
+
+
+==================================================
+PHASE 21 - GIT
+==================================================
+
+Initialize Git.
+
+Create a .gitignore.
+
+Never commit .env.
+
+Make meaningful commits.
+
+Example:
+
+Initial BARA architecture
+Implement project scanner
+Implement frontend analyzer
+Implement backend analyzer
+Implement API mismatch detection
+Implement architecture visualization
+Add demo project
+Add tests
+Improve UI
+Prepare hackathon submission
+
+
+==================================================
+PHASE 22 - FINAL DEMO
+==================================================
+
+The demo should follow this flow:
+
+1. Open BARA
+2. Select demo project
+3. Start analysis
+4. Show detected architecture
+5. Show frontend/backend connections
+6. Show API mismatches
+7. Click an issue
+8. Explain why it happened
+9. Show the relevant source locations
+10. Show the suggested fix
+
+The entire demonstration should be understandable without technical
+knowledge.
+
+
+==================================================
+FINAL PRODUCT REQUIREMENTS
+==================================================
+
+BARA must demonstrate:
+
+- Real project analysis
+- Real frontend/backend detection
+- Real API contract comparison
+- Real mismatch detection
+- Real architecture visualization
+- Beginner-friendly explanations
+- Concrete suggested fixes
+- Working demo
+- Automated tests
+- Clean documentation
+
+Do not claim features that are not implemented.
+
+Do not replace actual analysis with hardcoded demo results.
+
+The demo project is allowed to contain intentional bugs, but BARA's
+analyzer must actually detect those bugs.
+
+
+==================================================
+BOB SHELL WORKFLOW
+==================================================
+
+Work on the project incrementally.
+
+Before each major phase:
+
+1. Inspect existing code.
+2. Explain what will change.
+3. Implement the phase.
+4. Run tests.
+5. Fix errors.
+6. Show changed files.
+7. Explain the result.
+
+Do not rewrite the entire project unnecessarily.
+
+Do not delete working code without explaining why.
+
+Keep the architecture modular.
+
+Always prioritize a working MVP over unnecessary features.
+
+
+==================================================
+CURRENT PRIORITY
+==================================================
+
+Start with:
+
+PHASE 1
+Project initialization
+
+Then:
+
+PHASE 2
+Architecture
+
+Then:
+
+PHASE 3
+Backend
+
+Then:
+
+PHASE 4
+Project scanner
+
+Then:
+
+PHASE 5
+Frontend analyzer
+
+Then:
+
+PHASE 6
+Backend analyzer
+
+Then:
+
+PHASE 7
+API normalization
+
+Then:
+
+PHASE 8
+Mismatch detection
+
+Do not skip directly to UI polish.
+
+The analyzer is the core of BARA.

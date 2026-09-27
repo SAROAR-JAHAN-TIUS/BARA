@@ -14,7 +14,7 @@ function Navbar() {
         <span>BARA</span>
       </span>
       <span style={{ color: "var(--muted)", fontSize: 13 }}>
-        Backend Architecture &amp; API Analyzer
+        Backend Architecture Relationship Analyzer
       </span>
     </nav>
   );

@@ -1,32 +1,35 @@
-# React + TypeScript + Vite
+# BARA Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+The interactive user interface for BARA (Backend Architecture & Relationship Analyzer), built with **React 19**, **TypeScript**, and **Vite**.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Local Folder Selection**: Native operating system directory picker (`webkitdirectory`) with real-time file packaging and security validation.
+- **GitHub Repository Explorer**: Instant shallow clone and analysis for any public GitHub repository.
+- **7 Deep Inspection Views**:
+  1. **Issues**: Interactive contract mismatch explorer with side-by-side frontend vs backend code diffs and suggested fixes.
+  2. **Architecture**: Dual-mode interactive canvas (`Request Flow` animated storyteller + `Architecture Overview` multi-tier graph).
+  3. **Frontend**: Discovered HTTP clients, base URLs, callers, query parameters, and code snippets.
+  4. **Backend**: Routes, methods, controller functions, and request/response models.
+  5. **API Connections**: Complete contract matrix (matched, mismatched, unused backend endpoints, external calls).
+  6. **Database / Services**: Detected ORMs, database drivers, and third-party APIs.
+  7. **Repository Structure**: Hierarchical directory browser categorized by architectural roles.
+- **Storyteller Request Flow Player**: 5-tier animated packet simulation with playback controls (`Play`, `Pause`, `Replay`, `Prev`, `Next`, `0.5x`, `1x`, `2x`) and camera tracking.
 
-## React Compiler
+## Development Commands
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```bash
+# Install dependencies
+npm install
 
-## Expanding the Oxlint configuration
+# Run Vite development server (http://localhost:5173)
+npm run dev
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+# Run unit and integration tests (Vitest)
+npm test
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+# Build production bundle (TypeScript check + Vite production build)
+npm run build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+For full system architecture, backend setup, and end-to-end instructions, see the main [README.md](../README.md).

@@ -36,8 +36,14 @@ def normalize_path(path: str) -> str:
     if path != "/" and path.endswith("/"):
         path = path.rstrip("/")
 
-    # Replace {param} style (FastAPI)
+    # Replace {param} style (FastAPI / Spring / C#)
     path = _PATH_PARAM_RE.sub(":param", path)
+
+    # Replace [param] style (Next.js / Nuxt)
+    path = re.sub(r"\[[^\]]+\]", ":param", path)
+
+    # Replace :paramName style (Express.js / REST)
+    path = re.sub(r":([a-zA-Z_][a-zA-Z0-9_]*)", ":param", path)
 
     # Replace numeric / UUID segments
     segments = path.split("/")

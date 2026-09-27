@@ -3,6 +3,7 @@ import { useState } from "react";
 import "./index.css";
 import "./App.css";
 import type { AnalysisResult } from "./types";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { HomePage } from "./pages/HomePage";
 import { ResultsPage } from "./pages/ResultsPage";
 
@@ -23,13 +24,15 @@ export default function App() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
 
   return (
-    <div className="app">
-      <Navbar />
-      {result ? (
-        <ResultsPage result={result} onNewAnalysis={() => setResult(null)} />
-      ) : (
-        <HomePage onResult={setResult} />
-      )}
-    </div>
+    <ErrorBoundary>
+      <div className="app">
+        <Navbar />
+        {result ? (
+          <ResultsPage result={result} onNewAnalysis={() => setResult(null)} />
+        ) : (
+          <HomePage onResult={setResult} />
+        )}
+      </div>
+    </ErrorBoundary>
   );
 }

@@ -244,9 +244,9 @@ def detect_mismatches(
             continue
 
         # 3. No match at all → MISSING_BACKEND_ENDPOINT
-        # (check if it looks like an internal path — skip absolute external URLs)
-        if call.path.startswith("http://") or call.path.startswith("https://"):
-            continue  # External URL, skip
+        # Skip external URLs or if call is flagged as external
+        if call.is_external or call.path.startswith("http://") or call.path.startswith("https://"):
+            continue
 
         issues.append(
             Issue(
@@ -270,3 +270,37 @@ def detect_mismatches(
         )
 
     return issues
+
+
+def compute_match_stats(
+    frontend_calls: List[ApiCall],
+    backend_endpoints: List[ApiEndpoint],
+    issues: List[Issue],
+) -> dict:
+    """Compute matched, mismatched, and external API statistics."""
+    matched_count = 0
+    mismatched_count = 0
+    external_count = 0
+
+    mismatched_call_paths = {
+        (i.frontend_location.file, i.actual)
+        for i in issues
+        if i.frontend_location and i.issue_type == "METHOD_MISMATCH"
+    }
+
+    for call in frontend_calls:
+        if call.is_external or call.path.startswith("http://") or call.path.startswith("https://"):
+            external_count += 1
+            continue
+
+        matched_ep = _find_matching_endpoint(call, backend_endpoints, same_method=True)
+        if matched_ep:
+            matched_count += 1
+        elif _find_endpoint_any_method(call, backend_endpoints):
+            mismatched_count += 1
+
+    return {
+        "matched_apis": matched_count,
+        "mismatched_apis": mismatched_count,
+        "external_apis": external_count,
+    }

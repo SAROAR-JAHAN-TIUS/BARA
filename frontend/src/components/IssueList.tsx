@@ -1,6 +1,6 @@
 // BARA – Issues list component
 import { useState } from "react";
-import type { Issue } from "../types";
+import type { Issue, Summary } from "../types";
 import { IssueDetail } from "./IssueDetail";
 
 const ISSUE_TYPE_LABELS: Record<string, string> = {
@@ -14,11 +14,12 @@ const ISSUE_TYPE_LABELS: Record<string, string> = {
 
 interface Props {
   issues: Issue[];
+  summary?: Summary;
   selectedIssue?: Issue | null;
   onSelect?: (issue: Issue) => void;
 }
 
-export function IssueList({ issues, selectedIssue, onSelect }: Props) {
+export function IssueList({ issues, summary, selectedIssue, onSelect }: Props) {
   const [localSelected, setLocalSelected] = useState<Issue | null>(null);
 
   const selected = selectedIssue !== undefined ? selectedIssue : localSelected;
@@ -28,11 +29,51 @@ export function IssueList({ issues, selectedIssue, onSelect }: Props) {
   };
 
   if (issues.length === 0) {
+    if (
+      summary &&
+      summary.frontend_files_scanned === 0 &&
+      summary.backend_files_scanned === 0
+    ) {
+      return (
+        <div className="empty-state">
+          <div className="icon">📂</div>
+          <h3>No Supported Source Files Detected</h3>
+          <p>
+            BARA did not find any JavaScript/TypeScript frontend files (<code>.js</code>, <code>.jsx</code>, <code>.ts</code>, <code>.tsx</code>)
+            or Python backend files (<code>.py</code>) in this project.
+          </p>
+          <div style={{ marginTop: 12, fontSize: 13, color: "var(--muted)" }}>
+            Make sure the project contains supported full-stack source files.
+          </div>
+        </div>
+      );
+    }
+
+    if (
+      summary &&
+      summary.total_frontend_calls === 0 &&
+      summary.total_backend_endpoints === 0
+    ) {
+      return (
+        <div className="empty-state">
+          <div className="icon">🔍</div>
+          <h3>No API Calls or Endpoints Found</h3>
+          <p>
+            Scanned {summary.frontend_files_scanned} frontend file(s) and {summary.backend_files_scanned} backend file(s),
+            but no frontend API calls (fetch/axios) or backend FastAPI routes (@app.get/post/...) were detected.
+          </p>
+        </div>
+      );
+    }
+
     return (
       <div className="empty-state">
         <div className="icon">✅</div>
-        <h3>No issues detected</h3>
-        <p>BARA found no API integration problems in this project.</p>
+        <h3>No Integration Issues Detected</h3>
+        <p>
+          BARA analyzed {summary?.total_frontend_calls ?? 0} frontend API call(s) and{" "}
+          {summary?.total_backend_endpoints ?? 0} backend endpoint(s). All detected contracts match successfully!
+        </p>
       </div>
     );
   }
